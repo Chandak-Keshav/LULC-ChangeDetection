@@ -1522,3 +1522,54 @@ var barChart = ui.Chart.image.regions(
   );
 
 print(barChart);
+
+histogram.keys().getInfo().forEach(function (key) {
+  var classArea = ee.Number(histogram.get(key));
+  var percentage = classArea.divide(ee.Number(areas.size())).multiply(100);
+  
+  // Convert to JavaScript number before using toFixed
+  var classAreaValue = classArea.getInfo();
+  var percentageValue = percentage.getInfo();
+
+  print('Class: ' + key + ', Total Area: ' + classAreaValue.toFixed(2) + ' square meters, Percentage: ' + percentageValue.toFixed(2) + '%');
+});
+
+// Create a legend
+var legend = ui.Panel({
+  style: {
+    position: 'bottom-left',
+    padding: '8px 15px'
+  }
+});
+
+// Define classes, colors, and labels
+var classInfo = [
+  { name: 'Water Body', color: 'blue' },
+  { name: 'Waste Land', color: 'yellow' },
+  { name: 'Built-Up', color: 'red' },
+  { name: 'Green Areas', color: 'green' }
+];
+
+// Create and add labels to the legend for each class
+classInfo.forEach(function (classItem) {
+  var colorBox = ui.Label({
+    style: {
+      backgroundColor: classItem.color,
+      padding: '8px',
+      margin: '0 0 4px 0'
+    }
+  });
+
+  var classLabel = ui.Label({
+    value: 'Class ' + (classInfo.indexOf(classItem) + 1) + ': ' + classItem.name,
+    style: { margin: '0 0 4px 6px' }
+  });
+
+  legend.add(colorBox);
+  legend.add(classLabel);
+});
+
+// Add the legend to the map
+Map.add(legend);
+
+
